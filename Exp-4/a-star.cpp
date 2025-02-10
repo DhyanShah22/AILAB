@@ -6,20 +6,17 @@
 #include <algorithm>
 #include <sstream>
 using namespace std;
-// Structure representing a state in the 8-puzzle.
 struct Node {
     vector<int> board;      // 9 elements representing the board in row-major order.
     int g;                  // Cost so far (depth).
     int h;                  // Heuristic (number of misplaced tiles).
     int f;                  // f = g + h.
 };
-// Comparator for the priority queue (min-heap based on f-value).
 struct CompareNode {
     bool operator()(const Node &a, const Node &b) const {
         return a.f > b.f;
     }
 };
-// Utility: Print the board in a 3x3 matrix format.
 void printBoard(const vector<int>& board) {
     for (int i = 0; i < 9; i++) {
         cout << (board[i] == 0 ? " " : to_string(board[i])) << " ";
@@ -29,7 +26,6 @@ void printBoard(const vector<int>& board) {
     cout << "---------" << endl;
 }
 
-// Calculate the heuristic: number of misplaced tiles (ignoring the blank, which is 0).
 int calculateHeuristic(const vector<int>& board, const vector<int>& goal) {
     int misplaced = 0;
     for (int i = 0; i < 9; i++) {
@@ -39,7 +35,6 @@ int calculateHeuristic(const vector<int>& board, const vector<int>& goal) {
     return misplaced;
 }
 
-// Utility: Convert board vector to a string representation for hashing.
 string boardToString(const vector<int>& board) {
     stringstream ss;
     for (int num : board) {
@@ -48,7 +43,6 @@ string boardToString(const vector<int>& board) {
     return ss.str();
 }
 
-// Check if a given puzzle configuration is solvable.
 bool isSolvable(const vector<int>& board) {
     int inversions = 0;
     for (int i = 0; i < 9; i++) {
@@ -62,7 +56,6 @@ bool isSolvable(const vector<int>& board) {
     return (inversions % 2 == 0);
 }
 
-// Generate all valid successors by moving the blank (0) in four possible directions.
 vector<vector<int>> getSuccessors(const vector<int>& board) {
     vector<vector<int>> successors;
     int zeroPos = find(board.begin(), board.end(), 0) - board.begin();
@@ -82,7 +75,6 @@ vector<vector<int>> getSuccessors(const vector<int>& board) {
     }
     return successors;
 }
-// The A* search function.
 void solvePuzzle(const vector<int>& initial, const vector<int>& goal) {
     if (!isSolvable(initial)) {
         cout << "The given puzzle is not solvable." << endl;
@@ -103,16 +95,13 @@ void solvePuzzle(const vector<int>& initial, const vector<int>& goal) {
         if (closedList.find(boardStr) != closedList.end())
             continue;
         closedList.insert(boardStr);
-        // Print current board state
         cout << "Step " << current.g << " (f = " << current.f << "):" << endl;
         printBoard(current.board);
-        // Goal check.
         if (current.board == goal) {
             cout << "Solution found in " << current.g << " moves!" << endl;
             return;
         }
 
-        // Generate successors.
         vector<vector<int>> successors = getSuccessors(current.board);
         for (auto childBoard : successors) {
             string childStr = boardToString(childBoard);
