@@ -1,39 +1,38 @@
-#include <iostream>
-#include <queue>
-#include <unordered_map>
-#include <vector>
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<unordered_map>
 
 using namespace std;
 
 struct Node {
     string name;
-    int g;  
-    int h;  
-    int f;  
+    int g, h, f;
 };
 
 struct CompareNode {
-    bool operator()(const Node& a, const Node& b) {
-        return a.f > b.f; // Compare based on 'f'
+    bool operator()(const Node& a, const Node& b){
+        return a.f > b.f;
     }
 };
 
-unordered_map<string, vector<pair<string, int>>> adj;
+unordered_map<string, vector<pair<string, int>>>adj;
 unordered_map<string, int> heuristic;
 
-void aStar(string start, string goal) {
-    priority_queue<Node, vector<Node>, CompareNode> pq; // <--- change here
+void aStar(string start, string goal){
     unordered_map<string, int> g_cost;
     unordered_map<string, string> parent;
 
-    g_cost[start] = 0;
+    priority_queue<Node, vector<Node>, CompareNode> pq;
+
     pq.push({start, 0, heuristic[start], heuristic[start]});
-    
-    while (!pq.empty()) {
+    g_cost[start] = 0;
+
+    while(!pq.empty()){
         Node current = pq.top();
         pq.pop();
 
-        if (current.name == goal) {
+        if(current.name == goal){
             cout << "Path found: ";
             string path = goal;
             while (path != start) {
@@ -44,13 +43,13 @@ void aStar(string start, string goal) {
             return;
         }
 
-        for (auto neighbor : adj[current.name]) {
+        for(auto& neighbor : adj[current.name]){
             string next = neighbor.first;
             int cost = neighbor.second;
-            int new_g = current.g + cost;
+            int new_g = cost + current.g;
             int new_f = new_g + heuristic[next];
 
-            if (!g_cost.count(next) || new_g < g_cost[next]) {
+            if(!g_cost.count(next) || new_g < g_cost[next]){
                 g_cost[next] = new_g;
                 parent[next] = current.name;
                 pq.push({next, new_g, heuristic[next], new_f});

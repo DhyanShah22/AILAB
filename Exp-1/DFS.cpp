@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void dfs(vector<vector<int> >& graph, int start,vector<bool>& visited){
+void dfs(vector<vector<int>>& graph, int start,vector<bool>& visited){
     visited[start] = true;
     cout << start << " ";
     for(int i = 0; i < graph[start].size(); i++){
